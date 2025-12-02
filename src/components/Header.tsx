@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ShoppingCart, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { getButtonClasses, getContainerClasses } from '@/lib/design-system';
 
 interface HeaderProps {
   cartCount: number;
@@ -23,9 +24,9 @@ const Header = ({ cartCount }: HeaderProps) => {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className="sticky top-0 z-50 border-b border-border bg-card/80 backdrop-blur-md"
+      className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm"
     >
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+      <div className={`${getContainerClasses()} flex h-16 items-center justify-between`}>
         {/* Logo */}
         <motion.a
           href="#"
