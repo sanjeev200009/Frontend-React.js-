@@ -3,61 +3,97 @@ export interface Product {
   name: string;
   description: string;
   price: number;
-  image: string;
+  image_url: string;
 }
 
-// Mock data - replace with actual API calls when Laravel backend is ready
-export const getMockProducts = (): Product[] => {
-  return [
-    {
-      id: 1,
-      name: "Premium Wireless Headphones",
-      description: "High-quality wireless headphones with noise cancellation and premium sound.",
-      price: 299.99,
-      image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80"
-    },
-    {
-      id: 2,
-      name: "Smart Fitness Watch",
-      description: "Advanced fitness tracking with heart rate monitoring and GPS.",
-      price: 199.99,
-      image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80"
-    },
-    {
-      id: 3,
-      name: "Minimalist Desk Lamp",
-      description: "Modern LED desk lamp with adjustable brightness and USB charging.",
-      price: 89.99,
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&q=80"
-    },
-    {
-      id: 4,
-      name: "Organic Cotton T-Shirt",
-      description: "Comfortable and sustainable organic cotton t-shirt in various colors.",
-      price: 29.99,
-      image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&q=80"
-    },
-    {
-      id: 5,
-      name: "Ceramic Coffee Mug Set",
-      description: "Handcrafted ceramic mugs perfect for your morning coffee routine.",
-      price: 49.99,
-      image: "https://images.unsplash.com/photo-1514228742587-6b1558fcf93a?w=500&q=80"
-    },
-    {
-      id: 6,
-      name: "Bluetooth Portable Speaker",
-      description: "Compact wireless speaker with powerful sound and long battery life.",
-      price: 79.99,
-      image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=500&q=80"
+// API Configuration
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
+// Fetch products from Laravel API - NO FALLBACK, ONLY REAL API DATA
+export const getProducts = async (): Promise<Product[]> => {
+  try {
+    console.log('Fetching products from:', `${API_BASE_URL}/api/products`);
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    
+    const response = await fetch(`${API_BASE_URL}/api/products`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      signal: controller.signal
+    });
+
+    clearTimeout(timeoutId);
+    console.log('API Response status:', response.status);
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new Error('Products endpoint not found. Please check if the Laravel API is running.');
+      } else if (response.status >= 500) {
+        throw new Error('Server error occurred. Please try again later.');
+      } else if (response.status === 403) {
+        throw new Error('Access forbidden. Please check CORS configuration.');
+      } else {
+        throw new Error(`API request failed with status ${response.status}`);
+      }
     }
-  ];
+
+    const rawProducts = await response.json();
+    console.log('Raw products from API:', rawProducts);
+    
+    // Validate that we received an array
+    if (!Array.isArray(rawProducts)) {
+      throw new Error('Invalid response format: expected an array of products');
+    }
+    
+    // Validate and convert products
+    const products: Product[] = rawProducts.map((product: any, index: number) => {
+      // Validate required fields
+      if (!product.id || !product.name || product.price === undefined) {
+        console.warn(`Invalid product at index ${index}:`, product);
+        throw new Error(`Invalid product data received from API`);
+      }
+      
+      return {
+        id: Number(product.id),
+        name: String(product.name),
+        description: String(product.description || ''),
+        price: parseFloat(product.price),
+        image_url: String(product.image_url || '')
+      };
+    });
+    
+    console.log(`Successfully loaded ${products.length} products from API`);
+    return products;
+    
+  } catch (error) {
+    console.error('Error fetching products from API:', error);
+    
+    // Enhanced error handling - NO FALLBACK DATA
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      throw new Error('Unable to connect to the API server. Please ensure the Laravel server is running on port 8000.');
+    } else if (error.name === 'AbortError') {
+      throw new Error('Request timed out. Please check your internet connection and try again.');
+    } else if (error instanceof Error) {
+      throw error; // Re-throw the specific error
+    } else {
+      throw new Error('An unexpected error occurred while loading products.');
+    }
+  }
 };
 
-// Future API integration functions
-export const fetchProducts = async (): Promise<Product[]> => {
-  // TODO: Replace with actual Laravel API call
-  // const response = await fetch('http://localhost:8000/api/products');
-  // return response.json();
-  return getMockProducts();
+// Health check function to verify API connectivity
+export const checkApiHealth = async (): Promise<boolean> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/`, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' }
+    });
+    return response.ok;
+  } catch {
+    return false;
+  }
 };

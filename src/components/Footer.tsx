@@ -66,7 +66,7 @@ const Footer = () => {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="bg-gradient-to-b from-gray-900 to-black text-white border-t border-gray-800"
+      className="bg-gray-900 text-white border-t border-gray-800"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Main Footer Content */}
@@ -74,11 +74,11 @@ const Footer = () => {
           {/* Brand Section */}
           <motion.div variants={itemVariants} className="lg:col-span-1">
             <motion.h2 
-              className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-4"
+              className="text-3xl font-bold text-blue-400 mb-4"
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
-              StoreFront
+              Aahaas
             </motion.h2>
             <p className="text-gray-300 mb-6 leading-relaxed">
               Your premier destination for quality products and exceptional shopping experiences.
@@ -90,7 +90,7 @@ const Footer = () => {
                 <motion.a
                   key={social.label}
                   href={social.href}
-                  aria-label={social.label}
+
                   variants={socialVariants}
                   whileHover={{ 
                     scale: 1.2, 
@@ -124,7 +124,7 @@ const Footer = () => {
                     href={link.href}
                     className="text-gray-300 hover:text-blue-400 transition-colors duration-300 flex items-center group"
                     whileHover={{ x: 5 }}
-                    aria-label={`Navigate to ${link.name}`}
+
                   >
                     <span className="group-hover:border-b border-blue-400 transition-all duration-300">
                       {link.name}
@@ -154,7 +154,7 @@ const Footer = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="flex-1 bg-gray-800/50 backdrop-blur-sm border-gray-700 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500/20"
-                  aria-label="Email address for newsletter subscription"
+                  placeholder="Your email"
                 />
                 <motion.div
                   whileHover={{ scale: 1.05 }}
@@ -162,7 +162,7 @@ const Footer = () => {
                 >
                   <Button
                     type="submit"
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2 transition-all duration-300 group"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 transition-all duration-300 group"
                   >
                     <span>Subscribe</span>
                     <Mail size={16} className="ml-2 group-hover:translate-x-1 transition-transform duration-300" />
@@ -183,7 +183,7 @@ const Footer = () => {
               className="text-gray-400 text-sm"
               whileHover={{ color: "rgb(156, 163, 175)" }}
             >
-              &copy; {new Date().getFullYear()} StoreFront. All rights reserved.
+              &copy; {new Date().getFullYear()} Aahaas Ecommerce. All rights reserved.
             </motion.p>
             <motion.div 
               className="flex space-x-6 text-sm text-gray-400"
@@ -195,7 +195,7 @@ const Footer = () => {
                 href="/privacy" 
                 className="hover:text-white transition-colors duration-300"
                 whileHover={{ y: -2 }}
-                aria-label="Privacy Policy"
+
               >
                 Privacy Policy
               </motion.a>
@@ -203,7 +203,7 @@ const Footer = () => {
                 href="/terms" 
                 className="hover:text-white transition-colors duration-300"
                 whileHover={{ y: -2 }}
-                aria-label="Terms of Service"
+
               >
                 Terms of Service
               </motion.a>

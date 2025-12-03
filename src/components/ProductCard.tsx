@@ -21,15 +21,17 @@ const ProductCard = ({ product, onAddToCart, index }: ProductCardProps) => {
       <Card className="group h-full overflow-hidden border-border/50 bg-card transition-shadow hover:shadow-lg">
         <div className="relative aspect-square overflow-hidden">
           <motion.img
-            src={product.image}
+            src={product.image_url}
             alt={product.name}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
             loading="lazy"
+            onError={(e) => console.error('Image failed to load:', product.image_url, e)}
+            onLoad={() => console.log('Image loaded successfully:', product.image_url)}
           />
           <motion.div
             initial={{ opacity: 0 }}
             whileHover={{ opacity: 1 }}
-            className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent"
+            className="absolute inset-0 bg-black/40"
           />
         </div>
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, ChevronDown, Star, Shield, Truck } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ArrowRight, Star, Sparkles, CheckCircle, TrendingUp } from 'lucide-react';
 
 const Banner = () => {
   const scrollToProducts = () => {
@@ -57,207 +56,175 @@ const Banner = () => {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      {/* Background Elements */}
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-gray-50 via-white to-blue-50/30 pt-20">
       <div className="absolute inset-0 overflow-hidden">
-        {/* Animated geometric shapes */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8, rotate: 0 }}
-          animate={{ opacity: 0.1, scale: 1, rotate: 360 }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute -right-1/4 -top-1/4 h-[800px] w-[800px] rounded-full bg-gradient-to-br from-blue-400 to-purple-500"
-        />
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8, rotate: 0 }}
-          animate={{ opacity: 0.05, scale: 1, rotate: -360 }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="absolute -bottom-1/3 -left-1/4 h-[600px] w-[600px] rounded-full bg-gradient-to-tr from-purple-400 to-pink-500"
-        />
+        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-200/40 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-200/30 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-blue-100/20 to-purple-100/20 rounded-full blur-3xl"></div>
         
-        {/* Floating particles */}
-        {[...Array(6)].map((_, i) => (
+
+        {[Star, Sparkles, CheckCircle, TrendingUp].map((Icon, i) => (
           <motion.div
             key={i}
-            initial={{ opacity: 0, y: 100 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ 
-              opacity: [0, 1, 0],
-              y: [100, -100, 100],
-              x: [0, Math.random() * 100 - 50, 0]
+              opacity: [0.3, 0.6, 0.3],
+              y: [0, -20, 0],
+              rotate: [0, 360]
             }}
             transition={{
-              duration: 8,
+              duration: 6,
               repeat: Infinity,
               delay: i * 1.5,
               ease: "easeInOut"
             }}
-            className="absolute w-2 h-2 bg-blue-400/30 rounded-full"
+            className="absolute"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${20 + (i * 20)}%`,
+              top: `${20 + (i * 15)}%`,
             }}
-          />
+          >
+            <Icon className="h-6 w-6 text-blue-300/50" />
+          </motion.div>
         ))}
       </div>
 
-      <div className="container relative mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-[80vh]"
+          className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center min-h-[85vh]"
         >
-          {/* Content Section */}
-          <motion.div variants={slideInLeft} className="space-y-8">
-            {/* Badge */}
+          <motion.div variants={slideInLeft} className="space-y-10">
             <motion.div
               variants={itemVariants}
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 px-4 py-2 text-sm font-medium border border-blue-200/50"
+              className="inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-blue-50 to-purple-50 px-6 py-3 border border-blue-100/50 shadow-lg backdrop-blur-sm"
             >
-              <Star className="h-4 w-4 text-yellow-500" fill="currentColor" />
-              <span className="text-blue-700">Rated #1 Store</span>
-            </motion.div>
-
-            {/* Main Headline */}
-            <motion.h1
-              variants={itemVariants}
-              className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 leading-tight"
-            >
-              Premium Quality,
-              <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                Exceptional Value
+              <div className="flex -space-x-1">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="h-4 w-4 text-yellow-400 fill-current" />
+                ))}
+              </div>
+              <span className="text-sm font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Rated #1 by 10,000+ customers
               </span>
-            </motion.h1>
-
-            {/* Subheading */}
-            <motion.p
-              variants={itemVariants}
-              className="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-lg"
-            >
-              Discover our carefully curated collection of premium products designed to enhance your lifestyle and exceed your expectations.
-            </motion.p>
-
-            {/* Features List */}
-            <motion.div
-              variants={itemVariants}
-              className="flex flex-wrap gap-6 text-sm text-gray-600"
-            >
-              <div className="flex items-center gap-2">
-                <Shield className="h-5 w-5 text-green-500" />
-                <span>Quality Guarantee</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Truck className="h-5 w-5 text-blue-500" />
-                <span>Free Shipping</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Star className="h-5 w-5 text-yellow-500" fill="currentColor" />
-                <span>5-Star Reviews</span>
-              </div>
             </motion.div>
 
-            {/* Call-to-Action Buttons */}
+
+            <motion.div variants={itemVariants} className="space-y-6">
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[0.95] tracking-tight">
+                <span className="block bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 bg-clip-text text-transparent">
+                  Aahaas
+                </span>
+                <span className="block text-gray-900">Ecommerce</span>
+                <span className="block text-gray-700 text-4xl sm:text-5xl lg:text-6xl">
+                  Premium Products
+                </span>
+              </h1>
+              
+              <p className="text-xl text-gray-600 leading-relaxed max-w-2xl font-medium">
+                Experience the future of online shopping with Aahaas Ecommerce. 
+                <span className="text-blue-600">Premium products</span> delivered with excellence.
+              </p>
+            </motion.div>
+
+            {/* Feature Points */}
+            <motion.div
+              variants={itemVariants}
+              className="grid grid-cols-1 sm:grid-cols-3 gap-6"
+            >
+              {[
+                { icon: CheckCircle, text: "Premium Quality", color: "text-emerald-500" },
+                { icon: TrendingUp, text: "Best Prices", color: "text-blue-500" },
+                { icon: Star, text: "5-Star Service", color: "text-yellow-500" }
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-3 p-4 rounded-2xl bg-white/60 backdrop-blur-sm border border-gray-100 shadow-sm">
+                  <item.icon className={`h-5 w-5 ${item.color}`} />
+                  <span className="text-sm font-semibold text-gray-700">{item.text}</span>
+                </div>
+              ))}
+            </motion.div>
+
+            {/* Action Buttons */}
             <motion.div
               variants={itemVariants}
               className="flex flex-col sm:flex-row gap-4"
             >
-              <motion.div
-                whileHover={{ scale: 1.05, boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1)" }}
-                whileTap={{ scale: 0.98 }}
+              <button
+                onClick={scrollToProducts}
+                className="group relative inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
               >
-                <Button
-                  size="lg"
-                  onClick={scrollToProducts}
-                  className="group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg shadow-lg transition-all duration-300"
-                  aria-label="Browse our product catalog"
-                >
-                  Shop Now
-                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                </Button>
-              </motion.div>
+                <span>Shop Now</span>
+                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </button>
               
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="border-2 border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-4 text-lg transition-all duration-300"
-                  aria-label="Learn more about our company"
-                >
-                  Learn More
-                </Button>
-              </motion.div>
+              <button className="inline-flex items-center justify-center px-8 py-4 bg-white/80 backdrop-blur-sm text-gray-700 font-semibold rounded-2xl border border-gray-200 hover:bg-white hover:shadow-lg transform hover:scale-105 transition-all duration-200">
+                Learn More
+              </button>
             </motion.div>
           </motion.div>
 
-          {/* Hero Image Section */}
+          {/* Product Showcase */}
           <motion.div
             variants={slideInRight}
             className="relative flex justify-center lg:justify-end"
           >
             <div className="relative w-full max-w-lg">
-              {/* Main Image Container */}
+              {/* Main Product Card */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1, delay: 0.3 }}
-                className="relative bg-gradient-to-br from-white to-gray-100 rounded-3xl p-8 shadow-2xl"
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                className="relative bg-white/80 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/20"
               >
-                {/* Placeholder for product image */}
-                <div className="aspect-square bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl flex items-center justify-center">
-                  <div className="text-center space-y-4">
-                    <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mx-auto flex items-center justify-center">
-                      <Star className="h-12 w-12 text-white" fill="currentColor" />
+                {/* Product Preview */}
+                <div className="aspect-square bg-gradient-to-br from-gray-50 to-blue-50 rounded-2xl flex items-center justify-center relative overflow-hidden">
+                  {/* Premium Product Icon */}
+                  <div className="relative z-10">
+                    <div className="w-32 h-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl flex items-center justify-center shadow-xl transform rotate-3 hover:rotate-0 transition-transform duration-300">
+                      <Sparkles className="h-16 w-16 text-white" />
                     </div>
-                    <div className="space-y-2">
-                      <h3 className="text-xl font-semibold text-gray-800">Premium Products</h3>
-                      <p className="text-gray-600 text-sm">Carefully curated for you</p>
-                    </div>
+                  </div>
+                  
+                  {/* Background Pattern */}
+                  <div className="absolute inset-0 opacity-20">
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-200/30 to-purple-200/30"></div>
+                    <div className="absolute top-4 left-4 w-8 h-8 bg-blue-300/50 rounded-full"></div>
+                    <div className="absolute bottom-6 right-6 w-6 h-6 bg-purple-300/50 rounded-full"></div>
+                    <div className="absolute top-1/2 right-8 w-4 h-4 bg-blue-400/50 rounded-full"></div>
                   </div>
                 </div>
                 
-                {/* Floating Elements */}
+                {/* Product Info */}
+                <div className="mt-6 text-center">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Premium Collection</h3>
+                  <p className="text-gray-600 text-sm">Discover excellence in every detail</p>
+                </div>
+                
+                {/* Floating Badge */}
                 <motion.div
-                  animate={{ y: [-10, 10, -10] }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute -top-4 -right-4 bg-yellow-400 rounded-full p-3 shadow-lg"
+                  animate={{ rotate: [0, -5, 5, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute -top-3 -right-3 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-3 shadow-lg"
                 >
-                  <Star className="h-6 w-6 text-white" fill="currentColor" />
+                  <Star className="h-5 w-5 text-white" fill="currentColor" />
                 </motion.div>
                 
+                {/* Quality Badge */}
                 <motion.div
-                  animate={{ y: [10, -10, 10] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute -bottom-4 -left-4 bg-green-500 rounded-full p-3 shadow-lg"
+                  animate={{ scale: [1, 1.05, 1] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute -bottom-3 -left-3 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full p-3 shadow-lg"
                 >
-                  <Shield className="h-6 w-6 text-white" />
+                  <CheckCircle className="h-5 w-5 text-white" />
                 </motion.div>
               </motion.div>
               
-              {/* Background Glow Effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-3xl blur-3xl -z-10 scale-110" />
+              {/* Glow Effects */}
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-200/20 to-purple-200/20 rounded-3xl blur-2xl -z-10 scale-110"></div>
+              <div className="absolute -inset-4 bg-gradient-to-r from-blue-100/10 to-purple-100/10 rounded-3xl blur-3xl -z-20"></div>
             </div>
-          </motion.div>
-        </motion.div>
-
-        {/* Scroll Down Indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5, duration: 0.5 }}
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center"
-        >
-          <span className="text-sm text-gray-500 mb-2">Scroll to explore</span>
-          <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="cursor-pointer"
-            onClick={scrollToProducts}
-            role="button"
-            aria-label="Scroll down to products section"
-          >
-            <ChevronDown className="h-6 w-6 text-gray-400 hover:text-gray-600 transition-colors" />
           </motion.div>
         </motion.div>
       </div>

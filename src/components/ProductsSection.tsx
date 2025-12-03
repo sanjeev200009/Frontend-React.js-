@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import ProductCard from './ProductCard';
 import SkeletonLoader from './SkeletonLoader';
 import ErrorAlert from './ErrorAlert';
-import { Product, getMockProducts } from '@/services/api';
+import { Product, getProducts } from '@/services/api';
 import { toast } from 'sonner';
 
 interface ProductsSectionProps {
@@ -20,24 +20,27 @@ const ProductsSection = ({ onAddToCart }: ProductsSectionProps) => {
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<'name' | 'price-low' | 'price-high' | 'newest'>('newest');
-  const [cartCount, setCartCount] = useState(0);
 
   const loadProducts = async () => {
     setLoading(true);
     setError(null);
+    setProducts([]); // Clear existing products
+    
     try {
-      // Simulate API call to /api/products - replace with actual API when ready
-      await new Promise(resolve => setTimeout(resolve, 1200));
+      console.log('Loading products from Laravel API...');
+      const data = await getProducts();
+      console.log('Products loaded successfully:', data);
       
-      // In a real implementation, you would use:
-      // const response = await fetch('/api/products');
-      // if (!response.ok) throw new Error('Failed to fetch products');
-      // const data = await response.json();
-      
-      const data = getMockProducts();
-      setProducts(Array.isArray(data) ? data : []);
+      if (data && data.length > 0) {
+        setProducts(data);
+      } else {
+        setError('No products found in the database. Please add some products to your Laravel backend.');
+        setProducts([]);
+      }
     } catch (err) {
-      setError('Failed to load products from API. Please check your connection and try again.');
+      console.error('Error loading products:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+      setError(`Failed to load products: ${errorMessage}`);
       setProducts([]);
     } finally {
       setLoading(false);
@@ -50,13 +53,15 @@ const ProductsSection = ({ onAddToCart }: ProductsSectionProps) => {
 
   const handleAddToCart = (product: Product) => {
     onAddToCart(product);
-    setCartCount(prev => prev + 1);
     toast.success(`${product.name} added to cart!`, {
-      description: `$${product.price.toFixed(2)} - Cart now has ${cartCount + 1} items`,
+      description: `$${product.price.toFixed(2)}`,
+      action: {
+        label: "View Cart",
+        onClick: () => console.log("View cart clicked"),
+      },
     });
   };
 
-  // Filter and sort products
   const filteredAndSortedProducts = useMemo(() => {
     let filtered = products.filter(product =>
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -75,7 +80,7 @@ const ProductsSection = ({ onAddToCart }: ProductsSectionProps) => {
         break;
       case 'newest':
       default:
-        // Keep original order for newest
+        filtered.sort((a, b) => b.id - a.id);
         break;
     }
 
@@ -87,195 +92,171 @@ const ProductsSection = ({ onAddToCart }: ProductsSectionProps) => {
     visible: {
       opacity: 1,
       transition: {
-        duration: 0.6,
+        duration: 0.4,
         staggerChildren: 0.1,
       },
     },
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-      },
-    },
-  };
-
   return (
-    <section id="products" className="py-16 md:py-24 bg-gradient-to-b from-background to-secondary/20">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="products" className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+      <div className="max-w-7xl mx-auto">
         {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mb-12 text-center"
-        >
-          <h2 className="mb-4 text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground">
-            Featured Products
-          </h2>
-          <p className="mx-auto max-w-3xl text-lg text-muted-foreground leading-relaxed">
-            Discover our carefully curated selection of premium products designed to enhance your lifestyle
-          </p>
-          
-          {/* Cart Counter Badge */}
-          {cartCount > 0 && (
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-full text-sm font-medium"
-            >
-              <ShoppingCart className="h-4 w-4" />
-              <span>{cartCount} item{cartCount !== 1 ? 's' : ''} in cart</span>
-            </motion.div>
-          )}
-        </motion.div>
-
-        {/* Search and Filter Bar */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="mb-8 flex flex-col sm:flex-row gap-4 items-center justify-between"
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
         >
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <h2 className="text-4xl font-bold text-foreground mb-4">
+            Our Products
+          </h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Discover our curated collection of premium products, fetched live from our Laravel API
+          </p>
+        </motion.div>
+
+        {/* Search and Filter Controls */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="flex flex-col sm:flex-row gap-4 mb-8"
+        >
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
               type="text"
               placeholder="Search products..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2 w-full"
-              aria-label="Search products"
+              className="pl-10 bg-background/50 backdrop-blur-sm border-border/50 focus:border-primary/50"
             />
           </div>
-          
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4 text-muted-foreground" />
-              <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
-                <SelectTrigger className="w-40">
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="newest">Newest</SelectItem>
-                  <SelectItem value="name">Name A-Z</SelectItem>
-                  <SelectItem value="price-low">Price: Low to High</SelectItem>
-                  <SelectItem value="price-high">Price: High to Low</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="flex gap-2 sm:gap-4">
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-[180px] bg-background/50 backdrop-blur-sm border-border/50">
+                <Filter className="h-4 w-4 mr-2" />
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="newest">Newest First</SelectItem>
+                <SelectItem value="name">Name A-Z</SelectItem>
+                <SelectItem value="price-low">Price: Low to High</SelectItem>
+                <SelectItem value="price-high">Price: High to Low</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={loadProducts}
+              disabled={loading}
+              className="bg-background/50 backdrop-blur-sm border-border/50 hover:bg-background/80"
+            >
+              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+            </Button>
           </div>
         </motion.div>
 
         {/* Error State */}
         {error && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
             <ErrorAlert 
-              message={error} 
+              message={error}
               onRetry={loadProducts}
-              className="mx-auto max-w-md"
             />
           </motion.div>
         )}
 
         {/* Loading State */}
-        {loading ? (
+        {loading && (
           <motion.div
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            className="flex flex-col items-center justify-center py-16"
           >
-            {[...Array(8)].map((_, i) => (
-              <motion.div key={i} variants={itemVariants}>
-                <SkeletonLoader />
-              </motion.div>
-            ))}
-          </motion.div>
-        ) : (
-          <>
-            {/* Products Grid */}
+            <div className="mb-8">
+              <div className="flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                <span className="ml-3 text-gray-600">Loading products...</span>
+              </div>
+            </div>
             <motion.div
               variants={containerVariants}
               initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-100px" }}
-              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+              animate="visible"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full"
             >
-              {filteredAndSortedProducts.length > 0 ? (
-                filteredAndSortedProducts.map((product, index) => (
-                  <motion.div
-                    key={product.id}
-                    variants={itemVariants}
-                    whileHover={{ y: -5 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    <ProductCard
-                      product={product}
-                      onAddToCart={handleAddToCart}
-                      index={index}
-                    />
-                  </motion.div>
-                ))
-              ) : (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="col-span-full text-center py-12"
-                >
-                  <div className="text-muted-foreground">
-                    <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <h3 className="text-xl font-semibold mb-2">No products found</h3>
-                    <p>Try adjusting your search terms or filters</p>
-                  </div>
-                </motion.div>
-              )}
+              {Array.from({ length: 8 }).map((_, index) => (
+                <SkeletonLoader key={index} />
+              ))}
             </motion.div>
+          </motion.div>
+        )}
 
-            {/* Results Summary */}
-            {!loading && filteredAndSortedProducts.length > 0 && (
+        {/* Products Grid */}
+        {!loading && !error && (
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+          >
+            {filteredAndSortedProducts.length > 0 ? (
+              filteredAndSortedProducts.map((product, index) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onAddToCart={handleAddToCart}
+                  index={index}
+                />
+              ))
+            ) : (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="mt-8 text-center text-sm text-muted-foreground"
+                className="col-span-full text-center py-12"
               >
-                Showing {filteredAndSortedProducts.length} of {products.length} products
+                <ShoppingCart className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-foreground mb-2">No products found</h3>
+                <p className="text-muted-foreground mb-4">
+                  {searchTerm 
+                    ? `No products match "${searchTerm}". Try a different search term.`
+                    : "No products available at the moment."
+                  }
+                </p>
                 {searchTerm && (
-                  <span> for "{searchTerm}"</span>
+                  <Button
+                    variant="outline"
+                    onClick={() => setSearchTerm('')}
+                    className="mx-auto"
+                  >
+                    Clear Search
+                  </Button>
                 )}
               </motion.div>
             )}
-          </>
+          </motion.div>
         )}
 
-        {/* Refresh Button for Error Recovery */}
-        {!loading && !error && (
+        {/* Results Summary */}
+        {!loading && !error && filteredAndSortedProducts.length > 0 && (
           <motion.div
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
-            className="mt-12 text-center"
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="text-center mt-8 text-sm text-muted-foreground"
           >
-            <Button
-              variant="outline"
-              onClick={loadProducts}
-              className="group"
-              aria-label="Refresh products"
-            >
-              <RefreshCw className="h-4 w-4 mr-2 group-hover:animate-spin" />
-              Refresh Products
-            </Button>
+            Showing {filteredAndSortedProducts.length} of {products.length} products
+            {searchTerm && ` for "${searchTerm}"`}
           </motion.div>
         )}
       </div>
