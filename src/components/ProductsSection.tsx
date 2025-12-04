@@ -39,8 +39,8 @@ const ProductsSection = ({ onAddToCart }: ProductsSectionProps) => {
       }
     } catch (err) {
       console.error('Error loading products:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
-      setError(`Failed to load products: ${errorMessage}`);
+      const errorMessage = err instanceof Error ? err.message : 'Unable to connect to the backend';
+      setError(`Failed to load products: ${errorMessage}. Please ensure the Laravel server is running on port 8000.`);
       setProducts([]);
     } finally {
       setLoading(false);

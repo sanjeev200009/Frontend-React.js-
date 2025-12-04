@@ -157,3 +157,4 @@ const Header = ({ cartCount }: HeaderProps) => {
 };
 
 export default Header;
+

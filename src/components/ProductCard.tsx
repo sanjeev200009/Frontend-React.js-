@@ -16,9 +16,10 @@ const ProductCard = ({ product, onAddToCart, index }: ProductCardProps) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: index * 0.1 }}
-      whileHover={{ y: -8 }}
+      whileHover={{ y: -8, scale: 1.02 }}
+      className="group"
     >
-      <Card className="group h-full overflow-hidden border-border/50 bg-card transition-shadow hover:shadow-lg">
+      <Card className="h-full overflow-hidden border-border/50 bg-card transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 hover:border-blue-200">
         <div className="relative aspect-square overflow-hidden">
           <motion.img
             src={product.image_url}
@@ -36,15 +37,21 @@ const ProductCard = ({ product, onAddToCart, index }: ProductCardProps) => {
         </div>
 
         <CardContent className="p-4">
-          <h3 className="mb-2 text-lg font-semibold text-card-foreground line-clamp-1">
+          <motion.h3 
+            className="mb-2 text-lg font-semibold text-card-foreground line-clamp-1 group-hover:text-blue-600 transition-colors duration-200"
+            whileHover={{ x: 2 }}
+          >
             {product.name}
-          </h3>
+          </motion.h3>
           <p className="mb-3 text-sm text-muted-foreground line-clamp-2">
             {product.description}
           </p>
-          <p className="text-xl font-bold text-primary">
+          <motion.p 
+            className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+            whileHover={{ scale: 1.05 }}
+          >
             ${product.price.toFixed(2)}
-          </p>
+          </motion.p>
         </CardContent>
 
         <CardFooter className="p-4 pt-0">
